@@ -1,0 +1,15 @@
+{{template "header"}}
+
+<h1>PLEASE CREATE A PERSON</h1>
+<form action="/postaperson" method="POST">
+    <label for="Firstname">First name:</label>
+    <input type="text" name="Firstname" id="Firstname" placeholder="First Name">
+
+    <label for="Lastname">Last name:</label>
+    <input type="text" name="Lastname" id="Lastname" placeholder="Last Name">
+
+    <input type="submit">
+</form>
+
+
+{{template "footer"}}

@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -31,6 +32,9 @@ func main() {
 	router.HandleFunc("/testHtml", TestHtml)
 	router.HandleFunc("/passdata", PassData)
 	router.HandleFunc("/passperson", PassPerson)
+	router.HandleFunc("/createpersonform", CreatePersonForm)
+	router.HandleFunc("/postaperson", PostAPerson)
+	router.HandleFunc("/passpeople", PassPeople)
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -55,6 +59,30 @@ func PassPerson(w http.ResponseWriter, r *http.Request) {
 	person := people[0]
 
 	tpl.ExecuteTemplate(w, "passperson.html", person)
+}
+
+//CreatePersonForm ...
+func CreatePersonForm(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "createpersonform.html", nil)
+}
+
+//PostAPerson ...
+func PostAPerson(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Redirect(w, r, "/people", http.StatusSeeOther)
+		return
+	}
+	x := len(people)
+	x = x + 1
+
+	people = append(people, Person{ID: strconv.Itoa(x), Firstname: r.FormValue("Firstname"), Lastname: r.FormValue("Lastname")})
+
+	json.NewEncoder(w).Encode(people)
+}
+
+//PassPeople ...
+func PassPeople(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "passpeople.html", people)
 }
 
 //GetPeople does things
