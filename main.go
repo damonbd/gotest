@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"rolljimmy/models"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -12,15 +13,20 @@ import (
 
 var tpl *template.Template
 
+var testy models.Address
+
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
 }
 
 func main() {
 
-	people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
-	people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
-	people = append(people, Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
+	testy.City = "test"
+	testy.State = "fuck"
+
+	people = append(people, models.Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &models.Address{City: "City X", State: "State X"}})
+	people = append(people, models.Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &models.Address{City: "City Z", State: "State Y"}})
+	people = append(people, models.Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
 
 	router := mux.NewRouter()
 
@@ -75,7 +81,7 @@ func PostAPerson(w http.ResponseWriter, r *http.Request) {
 	x := len(people)
 	x = x + 1
 
-	people = append(people, Person{ID: strconv.Itoa(x), Firstname: r.FormValue("Firstname"), Lastname: r.FormValue("Lastname")})
+	people = append(people, models.Person{ID: strconv.Itoa(x), Firstname: r.FormValue("Firstname"), Lastname: r.FormValue("Lastname")})
 
 	json.NewEncoder(w).Encode(people)
 }
@@ -104,7 +110,7 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 //CreatePerson does things
 func CreatePerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var person Person
+	var person models.Person
 	_ = json.NewDecoder(r.Body).Decode(&person)
 	person.ID = params["id"]
 	people = append(people, person)
@@ -123,18 +129,18 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Person is a person
-type Person struct {
-	ID        string   `json:"id,omitempty`
-	Firstname string   `json:"firstname,omitempty"`
-	Lastname  string   `json:"lastname,omitempty"`
-	Address   *Address `json:"address,omitempty"`
-}
+// //Person is a person
+// type Person struct {
+// 	ID        string   `json:"id,omitempty`
+// 	Firstname string   `json:"firstname,omitempty"`
+// 	Lastname  string   `json:"lastname,omitempty"`
+// 	Address   *Address `json:"address,omitempty"`
+// }
 
-var people []Person
+var people []models.Person
 
-//Address is an address
-type Address struct {
-	City  string `json:"city,omitempty"`
-	State string `json:"state,omitempty"`
-}
+// //Address is an address
+// type Address struct {
+// 	City  string `json:"city,omitempty"`
+// 	State string `json:"state,omitempty"`
+// }
