@@ -5,15 +5,17 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"rolljimmy/models"
+	"rolljimmy/controllers"
 	"strconv"
 
 	"github.com/gorilla/mux"
+
+	//local
+
+	"rolljimmy/models"
 )
 
 var tpl *template.Template
-
-var testy models.Address
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -21,26 +23,27 @@ func init() {
 
 func main() {
 
-	testy.City = "test"
-	testy.State = "fuck"
-
 	people = append(people, models.Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &models.Address{City: "City X", State: "State X"}})
 	people = append(people, models.Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &models.Address{City: "City Z", State: "State Y"}})
 	people = append(people, models.Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
 
 	router := mux.NewRouter()
+	router = personcontroller.Router
 
 	router.HandleFunc("/people", GetPeople).Methods("GET")
 	router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
 	router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
 	router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
 	router.HandleFunc("/KruthSucks", KruthSucks)
-	router.HandleFunc("/testHtml", TestHtml)
+	router.HandleFunc("/testHtml", TestHTML)
 	router.HandleFunc("/passdata", PassData)
 	router.HandleFunc("/passperson", PassPerson)
 	router.HandleFunc("/createpersonform", CreatePersonForm)
 	router.HandleFunc("/postaperson", PostAPerson)
 	router.HandleFunc("/passpeople", PassPeople)
+
+	//works...
+	//router.HandleFunc("/differentcontroller", personcontroller.DifferentController)
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -50,8 +53,8 @@ func KruthSucks(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "kruthsucks.gohtml", nil)
 }
 
-//TestHtml ...
-func TestHtml(w http.ResponseWriter, r *http.Request) {
+//TestHTML ...
+func TestHTML(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "testHtml.html", nil)
 }
 
