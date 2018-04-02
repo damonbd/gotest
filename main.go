@@ -5,13 +5,12 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"rolljimmy/controllers"
 	"strconv"
 
 	"github.com/gorilla/mux"
 
 	//local
-
+	"rolljimmy/controllers"
 	"rolljimmy/models"
 )
 
@@ -29,6 +28,8 @@ func main() {
 
 	router := mux.NewRouter()
 	router = personcontroller.Router
+
+	personcontroller.AddRoutes(router)
 
 	router.HandleFunc("/people", GetPeople).Methods("GET")
 	router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
