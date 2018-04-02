@@ -9,15 +9,8 @@ import (
 
 var tpl *template.Template
 
-var Router *mux.Router
-
 func init() {
 	tpl = template.Must(template.ParseGlob("./templates/*"))
-	Router = mux.NewRouter()
-	//Router.HandleFunc("/differentcontroller", DifferentController)
-
-	Subrouter := Router.PathPrefix("/subroute").Subrouter()
-	Subrouter.HandleFunc("/testsubroute", testsubroute)
 }
 
 func personcontroller() {
@@ -27,6 +20,12 @@ func personcontroller() {
 //AddRoutes ...
 func AddRoutes(r *mux.Router) {
 	r.HandleFunc("/differentcontroller", DifferentController)
+}
+
+//AddSubRoutes ...
+func AddSubRoutes(r *mux.Router) {
+	r = r.PathPrefix("/subroute").Subrouter()
+	r.HandleFunc("/testsubroute", testsubroute)
 }
 
 //DifferentController ...

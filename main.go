@@ -15,6 +15,8 @@ import (
 )
 
 var tpl *template.Template
+var router *mux.Router
+var subRouter *mux.Router
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -26,10 +28,19 @@ func main() {
 	people = append(people, models.Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &models.Address{City: "City Z", State: "State Y"}})
 	people = append(people, models.Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
 
-	router := mux.NewRouter()
-	router = personcontroller.Router
+	addRoutes()
 
+	//works...
+	//router.HandleFunc("/differentcontroller", personcontroller.DifferentController)
+
+	log.Fatal(http.ListenAndServe(":8000", router))
+}
+
+//addRoutes ...
+func addRoutes() {
+	router = mux.NewRouter()
 	personcontroller.AddRoutes(router)
+	personcontroller.AddSubRoutes(router)
 
 	router.HandleFunc("/people", GetPeople).Methods("GET")
 	router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
@@ -42,11 +53,6 @@ func main() {
 	router.HandleFunc("/createpersonform", CreatePersonForm)
 	router.HandleFunc("/postaperson", PostAPerson)
 	router.HandleFunc("/passpeople", PassPeople)
-
-	//works...
-	//router.HandleFunc("/differentcontroller", personcontroller.DifferentController)
-
-	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 //KruthSucks ...
