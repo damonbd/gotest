@@ -6,10 +6,12 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 
 	//local
+
 	"rolljimmy/controllers"
 	"rolljimmy/models"
 )
@@ -17,9 +19,15 @@ import (
 var tpl *template.Template
 var router *mux.Router
 var subRouter *mux.Router
+var people []models.Person
+
+var fm = template.FuncMap{
+	"uc": strings.ToUpper,
+}
 
 func init() {
-	tpl = template.Must(template.ParseGlob("templates/*"))
+	tpl = template.Must(template.New("").Funcs(fm).ParseGlob("templates/*"))
+	router = mux.NewRouter()
 }
 
 func main() {
@@ -30,16 +38,13 @@ func main() {
 
 	addRoutes()
 
-	//works...
-	//router.HandleFunc("/differentcontroller", personcontroller.DifferentController)
-
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 //addRoutes ...
 func addRoutes() {
 	router = mux.NewRouter()
-	personcontroller.AddRoutes(router)
+	personcontroller.AddRoutes(router, tpl)
 	personcontroller.AddSubRoutes(router)
 
 	router.HandleFunc("/people", GetPeople).Methods("GET")
@@ -53,6 +58,7 @@ func addRoutes() {
 	router.HandleFunc("/createpersonform", CreatePersonForm)
 	router.HandleFunc("/postaperson", PostAPerson)
 	router.HandleFunc("/passpeople", PassPeople)
+	router.HandleFunc("/uppercasestring", UppercaseString)
 }
 
 //KruthSucks ...
@@ -106,6 +112,11 @@ func GetPeople(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(people)
 }
 
+//UppercaseString ...
+func UppercaseString(w http.ResponseWriter, r *http.Request) {
+	tpl.ExecuteTemplate(w, "uppercasestring.html", "this text should be changed to uppercase.")
+}
+
 //GetPerson does things
 func GetPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -138,19 +149,3 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(people)
 	}
 }
-
-// //Person is a person
-// type Person struct {
-// 	ID        string   `json:"id,omitempty`
-// 	Firstname string   `json:"firstname,omitempty"`
-// 	Lastname  string   `json:"lastname,omitempty"`
-// 	Address   *Address `json:"address,omitempty"`
-// }
-
-var people []models.Person
-
-// //Address is an address
-// type Address struct {
-// 	City  string `json:"city,omitempty"`
-// 	State string `json:"state,omitempty"`
-// }
