@@ -36,7 +36,7 @@ func AddRoutes(r *mux.Router, mainTpl *template.Template) {
 	r.HandleFunc("/people/{id}", GetPerson).Methods("GET")
 	r.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
 	r.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
-	r.HandleFunc("/KruthSucks", KruthSucks)
+	r.HandleFunc("/KruthIsAwesome", KruthSucks)
 	r.HandleFunc("/testHtml", TestHTML)
 	r.HandleFunc("/passdata", PassData)
 	r.HandleFunc("/passperson", PassPerson)
